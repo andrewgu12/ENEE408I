@@ -8,7 +8,10 @@
 #define INB2 7 // yellow
 #define INA2 8 // orange
 
-// ping sensor
-#define pingOutput 
+// ping sensors
+#define pingL 13
+#define pingC 12
+#define pingR 11
+
 void startNavigation();
 int pingSensor();
