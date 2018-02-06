@@ -7,4 +7,8 @@
 #define PWM2 6 // green
 #define INB2 7 // yellow
 #define INA2 8 // orange
+
+// ping sensor
+#define pingOutput 
 void startNavigation();
+int pingSensor();

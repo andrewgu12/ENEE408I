@@ -40,3 +40,7 @@ void startNavigation() {
   digitalWrite(INB2,HIGH);
   delay(1000);
 }
+
+int pingSensor() {
+  
+}
