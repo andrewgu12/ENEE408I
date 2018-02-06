@@ -42,5 +42,6 @@ void startNavigation() {
 }
 
 int pingSensor() {
-  
+  // write code to stop sensor within 3 seconds away from obstacle
+  // port code over from Arduino ping example
 }
