@@ -1,5 +1,35 @@
-#include "Arduino.h"
-#include "navigation.h"
+
+#define LED 13
+// transparent motor
+#define INA1 2 // non-pwm blue
+#define INB1 4 // non-pwm purple
+#define PWM1 5 // pwm grey
+
+// aqua motor
+#define PWM2 6 // green
+#define INB2 7 // yellow
+#define INA2 8 // orange
+
+// ping sensors
+#define pingL 13
+#define pingC 12
+#define pingR 11
+
+void setup() {
+  // set the motor pins
+  pinMode(INA1, OUTPUT);
+  pinMode(INB1, OUTPUT);
+  pinMode(PWM1, OUTPUT);
+  
+  pinMode(PWM2, OUTPUT);
+  pinMode(INB2, OUTPUT);
+  pinMode(INA2, OUTPUT);
+}
+
+void loop() {
+  startNavigation();
+
+}
 
 void startNavigation() {
   // for clockwise 
@@ -17,7 +47,7 @@ void startNavigation() {
     value to driver the motor  */
 
   //Clockwise for 3 secs
-  delay(3000); 		
+  delay(3000);     
 
   //For brake
   digitalWrite(INA1,HIGH);
@@ -41,7 +71,4 @@ void startNavigation() {
   delay(1000);
 }
 
-int pingSensor() {
-  // write code to stop sensor within 3 seconds away from obstacle
-  // port code over from Arduino ping example
-}
+
