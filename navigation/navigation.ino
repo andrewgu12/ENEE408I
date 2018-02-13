@@ -1,4 +1,5 @@
 
+// INA - clockwise, INB - counterclockwise
 #define LED 13
 // transparent motor
 #define INA1 2 // non-pwm blue
@@ -16,30 +17,39 @@
 #define pingR 11
 
 void setup() {
-  // set the motor pins
-  pinMode(INA1, OUTPUT);
+    pinMode(INA1, OUTPUT);
   pinMode(INB1, OUTPUT);
   pinMode(PWM1, OUTPUT);
-  
+
   pinMode(PWM2, OUTPUT);
   pinMode(INB2, OUTPUT);
   pinMode(INA2, OUTPUT);
+  Serial.begin(9600);
+  while(! Serial);
+  Serial.write("setup()");
+//   set the motor pins
+
 }
 
 void loop() {
-  startNavigation();
-
+//  Serial.write(45);
+//  Serial.write("loop()");
+//  digitalWrite(INB2, HIGH);
+  startNavigation(); 
 }
 
 void startNavigation() {
-  // for clockwise 
-  digitalWrite(INA1,HIGH);
-  digitalWrite(INB1,LOW);
-  analogWrite(PWM1,255);
-  
-  digitalWrite(INA2,HIGH);
-  digitalWrite(INB2,LOW);
-  analogWrite(PWM2,255);
+  Serial.write("start navigation");
+//  goStraight();
+//   delay(3000);
+  // for clockwise
+  digitalWrite(INA1, HIGH);
+  digitalWrite(INB1, LOW);
+  analogWrite(PWM1, 255);
+
+  digitalWrite(INA2, HIGH);
+  digitalWrite(INB2, LOW);
+  analogWrite(PWM2, 255);
   /*setting pwm of the motor to 255
     we can change the speed of rotaion
     by chaning pwm input but we are only
@@ -47,28 +57,37 @@ void startNavigation() {
     value to driver the motor  */
 
   //Clockwise for 3 secs
-  delay(3000);     
-
-  //For brake
-  digitalWrite(INA1,HIGH);
-  digitalWrite(INB1,HIGH);
-  digitalWrite(INA2,HIGH);
-  digitalWrite(INB2,HIGH);
-  delay(1000);
-
-  //For Anti Clock-wise motion - IN_1 = LOW , INB1 = HIGH
-  digitalWrite(INA1,LOW);
-  digitalWrite(INB1,HIGH);
-  digitalWrite(INA2,HIGH);
-  digitalWrite(INB2,HIGH);
   delay(3000);
 
-  //For brake
-  digitalWrite(INA1,HIGH);
-  digitalWrite(INB1,HIGH);
-  digitalWrite(INA2,HIGH);
-  digitalWrite(INB2,HIGH);
-  delay(1000);
+  stop();
+
+  //For Anti Clock-wise motion - IN_1 = LOW , INB1 = HIGH
+  digitalWrite(INA1, LOW);
+  digitalWrite(INB1, HIGH);
+  digitalWrite(INA2, HIGH);
+  digitalWrite(INB2, HIGH);
+  delay(3000);
+
+  stop();
 }
 
+void goStraight() {
+  analogWrite(PWM1, 120);
+  analogWrite(PWM2, 120);
+}
+
+void goLeft() {
+  
+}
+
+void goRight() {
+  
+}
+void stop() {
+  digitalWrite(INA1, 0);
+  digitalWrite(INB1, 0);
+  digitalWrite(INA2, 0);
+  digitalWrite(INB2, 0);
+  delay(1000);
+}
 
