@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from skimage.morphology import dilation
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # Set up windows with sliders
 cv2.namedWindow('image')
@@ -31,9 +31,9 @@ while(True):
     minValue = cv2.getTrackbarPos('minValue', 'mask')
     maxValue = cv2.getTrackbarPos('maxValue', 'mask')
     mask = 255 * (
-                    (hsv[:,:,0] > minHue) & (hsv[:,:,0] < maxHue) \
-                  & (hsv[:,:,1] > minSaturation) & (hsv[:,:,1] < maxSaturation) \
-                  & (hsv[:,:,2] > minValue) & (hsv[:,:,2] < maxValue) \
+                    (hsv[:,:,0] >= minHue) & (hsv[:,:,0] <= maxHue) \
+                  & (hsv[:,:,1] >= minSaturation) & (hsv[:,:,1] <= maxSaturation) \
+                  & (hsv[:,:,2] >= minValue) & (hsv[:,:,2] <= maxValue) \
                  ).astype(np.uint8)
 
     # Dilate mask to remove holes from noise
@@ -41,7 +41,8 @@ while(True):
     cv2.imshow('mask', mask) # display mask here because findContours modifies it
 
     # Find contours in image
-    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    # print(contours)
     largestContourIdx = np.argmax([len(c) for c in contours])
     cv2.drawContours(frame, contours, largestContourIdx, (0,255,0), 3)
 
