@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from skimage.morphology import dilation
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 while(True):
     # capture frame by frame

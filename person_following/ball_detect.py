@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 from skimage.morphology import dilation
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 # Set up windows with sliders
 cv2.namedWindow('image')
@@ -24,25 +24,30 @@ while(True):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Threshold hsv image within hue range
+    # minHue = 0
+    # maxHue = 30 # actual value we thresholded is 30
+    # minSaturation = 0
+    # maxSaturation = 166 # 166
+    # minValue = 0
+    # maxValue = 230
     minHue = cv2.getTrackbarPos('minHue', 'mask')
     maxHue = cv2.getTrackbarPos('maxHue', 'mask')
-    minSaturation = cv2.getTrackbarPos('minSaturation', 'mask')
-    maxSaturation = cv2.getTrackbarPos('maxSaturation', 'mask')
-    minValue = cv2.getTrackbarPos('minValue', 'mask')
-    maxValue = cv2.getTrackbarPos('maxValue', 'mask')
+    minSaturation = 0
+    maxSaturation = 0
+    minValue = 0
+    maxValue = 0
     mask = 255 * (
-                    (hsv[:,:,0] >= minHue) & (hsv[:,:,0] <= maxHue) \
-                  & (hsv[:,:,1] >= minSaturation) & (hsv[:,:,1] <= maxSaturation) \
-                  & (hsv[:,:,2] >= minValue) & (hsv[:,:,2] <= maxValue) \
-                 ).astype(np.uint8)
+        (hsv[:,:,0] > minHue) & (hsv[:,:,0] < maxHue) \
+        & (hsv[:,:,1] > minSaturation) & (hsv[:,:,1] < maxSaturation) \
+        & (hsv[:,:,2] > minValue) & (hsv[:,:,2] < maxValue) \
+    ).astype(np.uint8)
 
     # Dilate mask to remove holes from noise
     mask = dilation(mask, np.ones((3, 3)))
     cv2.imshow('mask', mask) # display mask here because findContours modifies it
-
+    
     # Find contours in image
-    contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    # print(contours)
+    _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     largestContourIdx = np.argmax([len(c) for c in contours])
     cv2.drawContours(frame, contours, largestContourIdx, (0,255,0), 3)
 

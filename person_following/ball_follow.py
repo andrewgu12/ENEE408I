@@ -19,13 +19,13 @@ found = 0; recent = 'R'; alexa = 0; check = 0; help = 0; hcheck = 0; followcount
 while True:
     # Image
     re, img = cap.read()
-    
+
     # Convert image to HSV
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # Threshold hsv image within hue range
     minHue = 27
-    maxHue = 37 
+    maxHue = 37
     minSaturation = 110
     maxSaturation = 255
     minValue = 110
@@ -60,7 +60,7 @@ while True:
         found = 0;
         pass
 
-    
+
     # Display images
     cv2.imshow('image', img)
 
@@ -69,7 +69,7 @@ while True:
 #        serial.write('H'.encode('ascii'))
         sys.exit(0)
         break
-    
+
     # # Get instruction from Adafruit_IO (Echo Dot)
     # if(check == 0):
     #     check = 20
@@ -99,7 +99,7 @@ while True:
     #     print("Stop command detected, stopcount = %d" % stopcount)
     #     alexa = "00"
     #     aio.send('408i-robot-control.robot-drive', '00')
-    
+
     # if followcount > 4:
     #     followcount = 0
     #     print('TOO MANY FOLLOW REQUESTS, RUNNING STOP')
@@ -108,7 +108,7 @@ while True:
     #     stopcount = 0;
     #     print('TOO MANY STOP REQUESTS, RUNNING FOLLOW')
     #     aio.send('408i-robot-control.robot-drive','10')
-    
+
     # if(found):
     #     if commandCount > 200:
     #         if help == '1':
