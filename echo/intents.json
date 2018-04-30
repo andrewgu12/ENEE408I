@@ -1,0 +1,37 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "engineering building navigation",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "QuestionIntent",
+          "samples": [
+            "Where is {Room}",
+            "Search for {Room}",
+            "I can not find {Room}",
+            "location of {Room}"           
+          ],
+          "slots": [
+            {
+              "name": "Room",
+              "type": "AMAZON.SearchQuery"
+            }
+          ]
+        }
+      ],
+      "types": []
+    }
+  }
+}
