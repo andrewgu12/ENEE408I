@@ -4,7 +4,7 @@ import numpy as np
 from skimage.morphology import dilation
 import serial
 from Adafruit_IO import Client
-# ser = serial.Serial('COM4', 9600, timeout=0)
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
 aio = Client('37dae49e09e64368b034e523c2bce404')
 
 # Set up capture device
@@ -133,22 +133,22 @@ while True:
         if(found):
             xloc = int(x)
             if xloc < 250: #Left
-#                ser.write('L'.encode('ascii'))
+                ser.write('L'.encode('ascii'))
                 recent = 'L'
                 print('L')
             elif xloc > 450: #Right
-#                ser.write('R'.encode('ascii'))
+                ser.write('R'.encode('ascii'))
                 recent = 'R'
                 print('R')
             else: #Forward
-#                ser.write('F'.encode('ascii'))
+                ser.write('F'.encode('ascii'))
                 print('F')
         else:
             if recent == 'L': #Search Left
- #               ser.write('Y'.encode('ascii'))
-                print('Y')
+               ser.write('Y'.encode('ascii'))
+               print('Y')
             elif recent == 'R': #Search Right
-  #              ser.write('X'.encode('ascii'))
+                ser.write('X'.encode('ascii'))
                 print('X')
     elif command == '2':
         turncount = turncount + 1
