@@ -3,6 +3,7 @@ import sys
 import numpy as np
 from skimage.morphology import dilation
 import serial
+import time
 from Adafruit_IO import Client
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
 aio = Client('37dae49e09e64368b034e523c2bce404')
