@@ -25,7 +25,7 @@
 
 int turned = 0;
 int startup = 0;
-const int lim = 11;  // Distance when object is too close
+const int lim = 9;  // Distance when object is too close
 
 // this constant won't change. It's the pin number of the sensor's output:
 const int pingPinR = 7;
@@ -74,14 +74,14 @@ void loop() {
     // Case statement to drive robot
     switch (cmd) {
       case 'F':  // FORWARD
-        if (inchL > lim && inchC > lim && inchR > lim) {
-          goForward(1);
-        }
+//        if (inchL > lim && inchC > lim && inchR > lim) {
+//          goForward(1);
+//        }
         
         
         if (inchC > lim) {
           // Too far from person, move closer
-          goForward(1);
+          goForward(2);
         } else if (inchC < 5) {
           goBackward(1);
         }
@@ -92,10 +92,10 @@ void loop() {
         brake();
         break;
       case 'L':  // LEFT
-        rotateRight(1);
+        rotateRight(2);
         break;
       case 'R':  // RIGHT
-        rotateLeft(1);
+        rotateLeft(2);
         break;
       case 'H':  // HOLD
         brake();
@@ -375,10 +375,10 @@ void rotateRight(int s) {
 
 void search(char dir){
   if(dir == 'R'){
-    rotateLeft(15); //Purposely triggering default case
+    rotateLeft(1); //Purposely triggering default case
   }
   else if(dir == 'L'){
-    rotateRight(15);  //Purposely triggering default case
+    rotateRight(1);  //Purposely triggering default case
   }
 }
 
