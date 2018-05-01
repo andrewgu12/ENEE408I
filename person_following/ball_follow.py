@@ -24,12 +24,12 @@ while True:
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # Threshold hsv image within hue range
-    minHue = 27
-    maxHue = 37
-    minSaturation = 110
-    maxSaturation = 255
-    minValue = 110
-    maxValue = 255
+    minHue = 52
+    maxHue = 64
+    minSaturation = 84
+    maxSaturation = 141
+    minValue = 0
+    maxValue = 91
     mask = 255 * (
                     (hsv[:,:,0] > minHue) & (hsv[:,:,0] < maxHue) \
                   & (hsv[:,:,1] > minSaturation) & (hsv[:,:,1] < maxSaturation) \
