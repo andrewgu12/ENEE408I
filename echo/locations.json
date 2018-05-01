@@ -1,0 +1,19 @@
+{
+  "locationObjects": [
+    {
+      "id": 0,
+      "location": "bathrooms",
+      "value": "Behind the staircase on every floor"
+    },
+    {
+      "id": 1,
+      "location": "enee408i",
+      "value": "3rd floor in room 123"
+    },
+    {
+      "id": 2,
+      "location": "cafe",
+      "value": "1st floor right next to the elevators"
+    }
+  ]
+}

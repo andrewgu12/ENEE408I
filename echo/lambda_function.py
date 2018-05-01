@@ -1,36 +1,6 @@
 from __future__ import print_function
-
-
-# --------------- Helpers that build all of the responses ----------------------
-
-def build_speechlet_response(title, output, reprompt_text, should_end_session):
-    return {
-        'outputSpeech': {
-            'type': 'PlainText',
-            'text': output
-        },
-        'card': {
-            'type': 'Simple',
-            'title': "SessionSpeechlet - " + title,
-            'content': "SessionSpeechlet - " + output
-        },
-        'reprompt': {
-            'outputSpeech': {
-                'type': 'PlainText',
-                'text': reprompt_text
-            }
-        },
-        'shouldEndSession': should_end_session
-    }
-
-
-def build_response(session_attributes, speechlet_response):
-    return {
-        'version': '1.0',
-        'sessionAttributes': session_attributes,
-        'response': speechlet_response
-    }
-
+import add_location
+from helpers import build_response, build_speechlet_response
 
 # --------------- Functions that control the skill's behavior ------------------
 
@@ -47,9 +17,15 @@ def get_welcome_response():
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
-def get_location_of_room(intent_request):    
-    search_value = intent_request['Room']['value']    
-    return build_response({}, build_speechlet_response("Hello", search_value, None, False))    
+def get_location_of_room(intent_request):
+    # value = intent_request['Room']['value']
+    print('Get inside location of room')
+    # print(intent_request)
+    search_value = intent_request['slots']['Room']['value']
+    print(search_value)
+    location = add_location.find_room(search_value)
+    return build_response({}, build_speechlet_response("Hello", location, None, False))
+    # return intent_request
 
 def handle_session_end_request():
     card_title = "Session Ended"
@@ -89,11 +65,13 @@ def on_intent(intent_request, session):
 
     intent = intent_request['intent']
     intent_name = intent_request['intent']['name']
-    intent_object = intent_request['intent']['slots']
+    # intent_object = intent_request['intent']['slots']
     # print(intent_request)
     # Dispatch to your skill's intent handlers
     if intent_name == "QuestionIntent":
-        return get_location_of_room(intent_object)    
+        return get_location_of_room(intent)    
+    elif intent_name == "AddLocations":
+        return add_location.add()
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
