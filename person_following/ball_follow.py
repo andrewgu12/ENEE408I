@@ -134,21 +134,26 @@ while True:
             xloc = int(x)
             if xloc < 250: #Left
                 ser.write('L'.encode('ascii'))
+                time.sleep(0.05)
                 recent = 'L'
                 print('L')
             elif xloc > 450: #Right
                 ser.write('R'.encode('ascii'))
+                time.sleep(0.05)
                 recent = 'R'
                 print('R')
             else: #Forward
                 ser.write('F'.encode('ascii'))
+                time.sleep(0.05)
                 print('F')
         else:
             if recent == 'L': #Search Left
                ser.write('Y'.encode('ascii'))
+               time.sleep(0.05)
                print('Y')
             elif recent == 'R': #Search Right
                 ser.write('X'.encode('ascii'))
+                time.sleep(0.05)
                 print('X')
     elif command == '2':
         turncount = turncount + 1
