@@ -93,6 +93,10 @@ def on_session_ended(session_ended_request, session):
 # --------------- Main handler ------------------
 
 def lambda_handler(event, context):
+    print('testing event dictionary')    
+    print(event.keys())
+    # if not event['session']:
+    #     print("hitting it via API")
     """ Route the incoming request based on type (LaunchRequest, IntentRequest,
     etc.) The JSON body of the request is provided in the event parameter.
     """
