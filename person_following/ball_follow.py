@@ -12,8 +12,8 @@ cap = cv2.VideoCapture(1)
 cap.set(6,10) # Set frame rate (set to 10)
 
 # Set up windows with sliders
-cv2.namedWindow('image')
-cv2.namedWindow('mask')
+#cv2.namedWindow('image')
+#cv2.namedWindow('mask')
 
 found = 0; recent = 'R'; alexa = 0; check = 0; help = 0; hcheck = 0; followcount = 0; stopcount = 0; command = '0'; commandCount = 0; turncount = 0;
 while True:
@@ -38,7 +38,7 @@ while True:
 
     # Dilate mask to remove holes from noise
     mask = dilation(mask, np.ones((3, 3)))
-    cv2.imshow('mask', mask) # display mask here because findContours modifies it
+    # cv2.imshow('mask', mask) # display mask here because findContours modifies it
 
     # Find contours in image
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -62,7 +62,7 @@ while True:
 
 
     # Display images
-    cv2.imshow('image', img)
+    # cv2.imshow('image', img)
 
     # Exit if q is pressed
     if cv2.waitKey(1) == ord('q'):
@@ -144,6 +144,7 @@ while True:
                 ser.write('F'.encode('ascii'))
                 print('F')
         else:
+            print('not found!')
             if recent == 'L': #Search Left
                ser.write('Y'.encode('ascii'))
                print('Y')
