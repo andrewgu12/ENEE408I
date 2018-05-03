@@ -18,14 +18,14 @@
 // motor powers/speeds (when we find the ratio of powers, list them here)
 #define slowA 30
 #define slowS 36
-#define mediumA 50
-#define mediumS 56
+#define mediumA 42
+#define mediumS 48
 #define highA 70
 #define highS 74
 
 int turned = 0;
 int startup = 0;
-const int lim = 16;  // Distance when object is too close
+const int lim = 12;  // Distance when object is too close
 int trig = 0;
 
 // this constant won't change. It's the pin number of the sensor's output:
@@ -51,6 +51,7 @@ void setup() {
 
 }
 
+int spd = 2;
 int cmd = '0';
 void loop() {
 
@@ -68,72 +69,80 @@ void loop() {
     cmd = Serial.read();
   }
 
-  Serial.write("Reading cmd: ");
-  Serial.write(cmd);
-  Serial.write("\n");
+  //Serial.print("Reading cmd: ");
+  //Serial.println(cmd);
 
   // Case statement to drive robot
   switch (cmd) {
     case 'F':  // FORWARD
       if (inchL > lim && inchC > (lim/2) && inchR > lim && trig == 0) {
-        goForward(1);
+        goForward(spd);
       } else if (inchC <= (lim/2) && trig == 0) {
         //goBackward(1); trig = 1;
         brake(); //trig = 1;
-      } else if (inchR <= lim/2 && inchL <= lim/2 && trig == 0) {
-        goBackward(1); trig = 1;
+      } else if (inchR <=  lim/2 && inchL <= lim/2 && trig == 0) {
+        goBackward(spd); trig = 1;
       } else if (inchR > lim && inchL <= lim && trig == 0) {
-        rotateRight(1);
+        rotateRight(spd);
       } else if (inchR <= lim && inchL > lim && trig == 0) {
-        rotateLeft(1);
+        rotateLeft(spd);
       } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim/2)) {
         trig = 0;
       }
       break;
     case 'L':  // LEFT
+      /*   
       if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
-        rotateLeft(1);
+        rotateRight(spd);
       } else if (inchC <= (lim/2) && trig == 0) {
         //goBackward(1); trig = 1;
         brake(); //trig = 1;
       } else if (inchR <= lim && inchL <= lim && trig == 0) {
-        goBackward(1); trig = 1;
+        goBackward(spd); trig = 1;
       } else if (inchR > lim && inchL <= lim && trig == 0) {
-        rotateRight(1);
+        rotateRight(spd);
       } else if (inchR <= lim && inchL > lim && trig == 0) {
-        rotateLeft(1);
+        rotateLeft(spd);
       } else if (trig == 1 && inchR > lim && inchL > lim  && inchC > (lim/2)) {
         trig = 0;
       }
+      */
+      rotateRight(spd);
       break;
     case 'R':  // RIGHT
+      rotateLeft(spd);
+      /*
       if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
-        rotateRight(1);
+        rotateLeft(spd);
       } else if (inchC <= (lim/2) && trig == 0) {
         //goBackward(1); trig = 1;
         brake(); //trig = 1;
       } else if (inchR <= lim && inchL <= lim && trig == 0) {
-        goBackward(1); trig = 1;
+        goBackward(spd); trig = 1;
       } else if (inchR > lim && inchL <= lim && trig == 0) {
-        rotateRight(1);
+        rotateRight(spd);
       } else if (inchR <= lim && inchL > lim && trig == 0) {
-        rotateLeft(1);
+        rotateLeft(spd);
       } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim/2)) {
         trig = 0;
       }
+      */
       break;
     case 'H':  // HOLD
       brake(); break;
     case 'X':
-      search('R'); break;
+      brake(); break;
+      //search('R'); break;
     case 'Y':
-      search('L'); break;
+      brake(); break;
+      //search('L'); break;
     default:
       brake();
       //move_with_sensor();
       break;
   }
-  delay(50);
+  cmd = '0';
+  delay(300);
 }
 
 
@@ -344,7 +353,7 @@ void rotateLeft(int s) {
       pR = 15;
 
   }
-  //For Clock-wise motion - IN_1 = LOW , INB1 = HIGH
+  //For Clock-wise motion - INA1 = HIGH , INB1 = LOW
   digitalWrite(INA1, HIGH); //Silver is 1
   digitalWrite(INB1, LOW);
   analogWrite(PWM1, pL); // 255 is the highest value to drive the motor
@@ -380,7 +389,7 @@ void rotateRight(int s) {
       pR = 15;
 
   }
-  //For Anti Clock-wise motion - IN_1 = LOW , INB1 = HIGH
+  //For Counter Clock-wise motion - INA1 = LOW , INB1 = HIGH
   digitalWrite(INA1, LOW);    //Silver is 1
   digitalWrite(INB1, HIGH);
   analogWrite(PWM1, pL);
