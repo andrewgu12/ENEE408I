@@ -4,6 +4,7 @@ import numpy as np
 from skimage.morphology import dilation
 import serial
 import time
+import smtplib
 from Adafruit_IO import Client
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
 aio = Client('37dae49e09e64368b034e523c2bce404')
@@ -15,6 +16,13 @@ cap.set(6,10) # Set frame rate (set to 10)
 # Set up windows with sliders
 cv2.namedWindow('image')
 cv2.namedWindow('mask')
+
+server = smtplib.SMTP('smtp.gmail.com', 587)
+
+#Next, log in to the server
+server.login("team12enee408i", "team12owns")
+
+sentEmail = 0
 
 found = 0; recent = 'R'; alexa = 0; check = 0; help = 0; hcheck = 0; followcount = 0; stopcount = 0; command = '0'; commandCount = 0; turncount = 0;
 while True:
@@ -133,6 +141,13 @@ while True:
         #print('FOLLOW')
         if(found):
             xloc = int(x)
+            rloc = int(radius)
+            if rloc >= 9 and sentEmail == 0: #close to person
+                #Send the mail
+                msg = "Hello!" # The /n separates the message from the headers
+                server.sendmail("team12enee408i@gmail.com", "team12enee408i@gmail.com", msg)
+                print('SENT MESSAGE')
+                sentEmail = 1
             if xloc < 250: #Left
                 ser.write('L'.encode('ascii'))
                 time.sleep(0.05)
@@ -148,6 +163,7 @@ while True:
                 time.sleep(0.05)
                 print('F')
         else:
+            sentEmail = 0
             if recent == 'L': #Search Left
                ser.write('Y'.encode('ascii'))
                time.sleep(0.05)
