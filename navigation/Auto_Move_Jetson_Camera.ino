@@ -25,7 +25,8 @@
 
 int turned = 0;
 int startup = 0;
-const int lim = 9;  // Distance when object is too close
+const int lim = 16;  // Distance when object is too close
+int trig = 0;
 
 // this constant won't change. It's the pin number of the sensor's output:
 const int pingPinR = 7;
@@ -64,57 +65,73 @@ void loop() {
   // goForward(1), goBackward(1), rotateRight/Left(1), turnRight/Left(1), brake()
 
   if (Serial.available() > 0) {
-
     cmd = Serial.read();
+  }
 
-    Serial.write("Reading cmd: ");
-    Serial.write(cmd);
-    Serial.write("\n");
+  Serial.write("Reading cmd: ");
+  Serial.write(cmd);
+  Serial.write("\n");
 
-    // Case statement to drive robot
-    switch (cmd) {
-      case 'F':  // FORWARD
-//        if (inchL > lim && inchC > lim && inchR > lim) {
-//          goForward(1);
-//        }
-        
-        
-        if (inchC > lim) {
-          // Too far from person, move closer
-          goForward(2);
-        } else if (inchC < 5) {
-          goBackward(1);
-        }
-        else {
-          // Too close to person stop
-          brake();
-        }
-        brake();
-        break;
-      case 'L':  // LEFT
-        rotateRight(2);
-        break;
-      case 'R':  // RIGHT
-        rotateLeft(2);
-        break;
-      case 'H':  // HOLD
-        brake();
-        break;
-      case 'X':
-        search('R');
-        break;
-      case 'Y':
-        search('L');
-        break;
-      default:
-        brake();
-        //move_with_sensor();
-        break;
-    }
-
-  } // close if Serial.avail
-  else {
-    brake();
+  // Case statement to drive robot
+  switch (cmd) {
+    case 'F':  // FORWARD
+      if (inchL > lim && inchC > (lim/2) && inchR > lim && trig == 0) {
+        goForward(1);
+      } else if (inchC <= (lim/2) && trig == 0) {
+        //goBackward(1); trig = 1;
+        brake(); //trig = 1;
+      } else if (inchR <= lim/2 && inchL <= lim/2 && trig == 0) {
+        goBackward(1); trig = 1;
+      } else if (inchR > lim && inchL <= lim && trig == 0) {
+        rotateRight(1);
+      } else if (inchR <= lim && inchL > lim && trig == 0) {
+        rotateLeft(1);
+      } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim/2)) {
+        trig = 0;
+      }
+      break;
+    case 'L':  // LEFT
+      if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
+        rotateLeft(1);
+      } else if (inchC <= (lim/2) && trig == 0) {
+        //goBackward(1); trig = 1;
+        brake(); //trig = 1;
+      } else if (inchR <= lim && inchL <= lim && trig == 0) {
+        goBackward(1); trig = 1;
+      } else if (inchR > lim && inchL <= lim && trig == 0) {
+        rotateRight(1);
+      } else if (inchR <= lim && inchL > lim && trig == 0) {
+        rotateLeft(1);
+      } else if (trig == 1 && inchR > lim && inchL > lim  && inchC > (lim/2)) {
+        trig = 0;
+      }
+      break;
+    case 'R':  // RIGHT
+      if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
+        rotateRight(1);
+      } else if (inchC <= (lim/2) && trig == 0) {
+        //goBackward(1); trig = 1;
+        brake(); //trig = 1;
+      } else if (inchR <= lim && inchL <= lim && trig == 0) {
+        goBackward(1); trig = 1;
+      } else if (inchR > lim && inchL <= lim && trig == 0) {
+        rotateRight(1);
+      } else if (inchR <= lim && inchL > lim && trig == 0) {
+        rotateLeft(1);
+      } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim/2)) {
+        trig = 0;
+      }
+      break;
+    case 'H':  // HOLD
+      brake(); break;
+    case 'X':
+      search('R'); break;
+    case 'Y':
+      search('L'); break;
+    default:
+      brake();
+      //move_with_sensor();
+      break;
   }
   delay(50);
 }
@@ -373,12 +390,12 @@ void rotateRight(int s) {
   analogWrite(PWM2, pR);
 }
 
-void search(char dir){
-  if(dir == 'R'){
-    rotateLeft(1); //Purposely triggering default case
+void search(char dir) {
+  if (dir == 'R') {
+    rotateLeft(4); //Purposely triggering default case
   }
-  else if(dir == 'L'){
-    rotateRight(1);  //Purposely triggering default case
+  else if (dir == 'L') {
+    rotateRight(4);  //Purposely triggering default case
   }
 }
 
