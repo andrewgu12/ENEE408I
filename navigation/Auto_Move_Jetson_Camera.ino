@@ -16,7 +16,7 @@
 #define INA2 13 // orange
 
 // motor powers/speeds (when we find the ratio of powers, list them here)
-#define slowA 30
+#define slowA 70
 #define slowS 36
 #define mediumA 42
 #define mediumS 48
@@ -74,9 +74,9 @@ void loop() {
     // Case statement to drive robot
     switch (cmd) {
       case 'F':  // FORWARD
-        if (inchL > lim && inchC > (lim / 2) && inchR > lim && trig == 0) {
+        if (inchL > lim && inchC > (lim) && inchR > lim && trig == 0) {
           goForward(spd);
-        } else if (inchC <= (lim / 2) && trig == 0) {
+        } else if (inchC <= (lim) && trig == 0) {
           //goBackward(1); trig = 1;
           brake(); //trig = 1;
         } else if (inchR <=  lim / 2 && inchL <= lim / 2 && trig == 0) {
@@ -143,8 +143,8 @@ void loop() {
   } else {
     brake();
   }
-  //cmd = '0';
-  delay(10);
+  cmd = '0';
+  delay(50);
 }
 
 
@@ -195,17 +195,6 @@ void pingAll() {
   durationL = pulseIn(pingPinL, HIGH);        // microsecond to get ping back from object
   inchL = microsecondsToInches(durationL);  // convert time -> distance (inch)
 
-  //  // Print distance to serial window
-  //  Serial.print(inchL);
-  //  Serial.print("inL, ");
-  //
-  //  Serial.print(inchC);
-  //  Serial.print("inC, ");
-  //
-  //  Serial.print(inchR);
-  //  Serial.print("inR ");
-  //
-  //  Serial.println();
 }
 
 // Make right sensor ping
@@ -256,7 +245,7 @@ void brake() {
   digitalWrite(INB1, HIGH);
   digitalWrite(INA2, HIGH);
   digitalWrite(INB2, HIGH);
-  delay(100);
+  //delay(100);
 }
 
 // -------------------------------
