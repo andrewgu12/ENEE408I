@@ -67,82 +67,84 @@ void loop() {
 
   if (Serial.available() > 0) {
     cmd = Serial.read();
-  }
 
-  //Serial.print("Reading cmd: ");
-  //Serial.println(cmd);
+    //Serial.print("Reading cmd: ");
+    //Serial.println(cmd);
 
-  // Case statement to drive robot
-  switch (cmd) {
-    case 'F':  // FORWARD
-      if (inchL > lim && inchC > (lim/2) && inchR > lim && trig == 0) {
-        goForward(spd);
-      } else if (inchC <= (lim/2) && trig == 0) {
-        //goBackward(1); trig = 1;
-        brake(); //trig = 1;
-      } else if (inchR <=  lim/2 && inchL <= lim/2 && trig == 0) {
-        goBackward(spd); trig = 1;
-      } else if (inchR > lim && inchL <= lim && trig == 0) {
+    // Case statement to drive robot
+    switch (cmd) {
+      case 'F':  // FORWARD
+        if (inchL > lim && inchC > (lim / 2) && inchR > lim && trig == 0) {
+          goForward(spd);
+        } else if (inchC <= (lim / 2) && trig == 0) {
+          //goBackward(1); trig = 1;
+          brake(); //trig = 1;
+        } else if (inchR <=  lim / 2 && inchL <= lim / 2 && trig == 0) {
+          goBackward(spd); trig = 1;
+        } else if (inchR > lim && inchL <= lim && trig == 0) {
+          rotateRight(spd);
+        } else if (inchR <= lim && inchL > lim && trig == 0) {
+          rotateLeft(spd);
+        } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim / 2)) {
+          trig = 0;
+        }
+        break;
+      case 'L':  // LEFT
+        /*
+          if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
+          rotateRight(spd);
+          } else if (inchC <= (lim/2) && trig == 0) {
+          //goBackward(1); trig = 1;
+          brake(); //trig = 1;
+          } else if (inchR <= lim && inchL <= lim && trig == 0) {
+          goBackward(spd); trig = 1;
+          } else if (inchR > lim && inchL <= lim && trig == 0) {
+          rotateRight(spd);
+          } else if (inchR <= lim && inchL > lim && trig == 0) {
+          rotateLeft(spd);
+          } else if (trig == 1 && inchR > lim && inchL > lim  && inchC > (lim/2)) {
+          trig = 0;
+          }
+        */
         rotateRight(spd);
-      } else if (inchR <= lim && inchL > lim && trig == 0) {
+        break;
+      case 'R':  // RIGHT
         rotateLeft(spd);
-      } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim/2)) {
-        trig = 0;
-      }
-      break;
-    case 'L':  // LEFT
-      /*   
-      if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
-        rotateRight(spd);
-      } else if (inchC <= (lim/2) && trig == 0) {
-        //goBackward(1); trig = 1;
-        brake(); //trig = 1;
-      } else if (inchR <= lim && inchL <= lim && trig == 0) {
-        goBackward(spd); trig = 1;
-      } else if (inchR > lim && inchL <= lim && trig == 0) {
-        rotateRight(spd);
-      } else if (inchR <= lim && inchL > lim && trig == 0) {
-        rotateLeft(spd);
-      } else if (trig == 1 && inchR > lim && inchL > lim  && inchC > (lim/2)) {
-        trig = 0;
-      }
-      */
-      rotateRight(spd);
-      break;
-    case 'R':  // RIGHT
-      rotateLeft(spd);
-      /*
-      if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
-        rotateLeft(spd);
-      } else if (inchC <= (lim/2) && trig == 0) {
-        //goBackward(1); trig = 1;
-        brake(); //trig = 1;
-      } else if (inchR <= lim && inchL <= lim && trig == 0) {
-        goBackward(spd); trig = 1;
-      } else if (inchR > lim && inchL <= lim && trig == 0) {
-        rotateRight(spd);
-      } else if (inchR <= lim && inchL > lim && trig == 0) {
-        rotateLeft(spd);
-      } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim/2)) {
-        trig = 0;
-      }
-      */
-      break;
-    case 'H':  // HOLD
-      brake(); break;
-    case 'X':
-      brake(); break;
+        /*
+          if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
+          rotateLeft(spd);
+          } else if (inchC <= (lim/2) && trig == 0) {
+          //goBackward(1); trig = 1;
+          brake(); //trig = 1;
+          } else if (inchR <= lim && inchL <= lim && trig == 0) {
+          goBackward(spd); trig = 1;
+          } else if (inchR > lim && inchL <= lim && trig == 0) {
+          rotateRight(spd);
+          } else if (inchR <= lim && inchL > lim && trig == 0) {
+          rotateLeft(spd);
+          } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim/2)) {
+          trig = 0;
+          }
+        */
+        break;
+      case 'H':  // HOLD
+        brake(); break;
+      case 'X':
+        brake(); break;
       //search('R'); break;
-    case 'Y':
-      brake(); break;
+      case 'Y':
+        brake(); break;
       //search('L'); break;
-    default:
-      brake();
-      //move_with_sensor();
-      break;
+      default:
+        brake();
+        //move_with_sensor();
+        break;
+    }
+  } else {
+    brake();
   }
-  cmd = '0';
-  delay(300);
+  //cmd = '0';
+  delay(10);
 }
 
 
