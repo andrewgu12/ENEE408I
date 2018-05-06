@@ -17,10 +17,11 @@ cap.set(6,10) # Set frame rate (set to 10)
 cv2.namedWindow('image')
 cv2.namedWindow('mask')
 
-server = smtplib.SMTP('smtp.gmail.com', 587)
+#global variable for sleep so we can change it depending on the occation.
+slpW = 0.055
 
-#Next, log in to the server
-server.login("team12enee408i", "team12owns")
+msg = 'H' # The /n separates the message from the headers
+
 
 sentEmail = 0
 
@@ -143,34 +144,37 @@ while True:
             xloc = int(x)
             rloc = int(radius)
             if rloc >= 9 and sentEmail == 0: #close to person
-                #Send the mail
-                msg = "Hello!" # The /n separates the message from the headers
-                server.sendmail("team12enee408i@gmail.com", "team12enee408i@gmail.com", msg)
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.ehlo()
+                server.starttls()
+                server.login('team12enee408i@gmail.com', 'team12owns')
+                server.sendmail('team12enee408i@gmail.com', 'team12enee408i@gmail.com', msg)
+                server.close()
                 print('SENT MESSAGE')
                 sentEmail = 1
             if xloc < 250: #Left
                 ser.write('L'.encode('ascii'))
-                time.sleep(0.05)
+                time.sleep(slpW)
                 recent = 'L'
                 print('L')
             elif xloc > 450: #Right
                 ser.write('R'.encode('ascii'))
-                time.sleep(0.05)
+                time.sleep(slpW)
                 recent = 'R'
                 print('R')
             else: #Forward
                 ser.write('F'.encode('ascii'))
-                time.sleep(0.05)
+                time.sleep(slpW)
                 print('F')
         else:
             sentEmail = 0
             if recent == 'L': #Search Left
                ser.write('Y'.encode('ascii'))
-               time.sleep(0.05)
+               time.sleep(slpW)
                print('Y')
             elif recent == 'R': #Search Right
                 ser.write('X'.encode('ascii'))
-                time.sleep(0.05)
+                time.sleep(slpW)
                 print('X')
     elif command == '2':
         turncount = turncount + 1
