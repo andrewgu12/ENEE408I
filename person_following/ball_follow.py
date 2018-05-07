@@ -24,6 +24,7 @@ msg = 'H' # The /n separates the message from the headers
 
 
 sentEmail = 0
+AFprev = -1
 
 found = 0; recent = 'R'; alexa = 0; check = 0; help = 0; hcheck = 0; followcount = 0; stopcount = 0; command = '0'; commandCount = 0; turncount = 0;
 while True:
@@ -79,7 +80,20 @@ while True:
 #        serial.write('H'.encode('ascii'))
         sys.exit(0)
         break
-
+    
+    data = aio.data('408i-robot-control')
+    command = data[0]
+    if(command!=AFprev):
+        AFprev = command
+        print('COMMAND')
+        if(command == 0):
+            print('STOP')
+            ser.write('O'.encode('ascii'))
+        elif(command == 1):
+            print('GO')
+            ser.write('1'.encode('ascii'))
+            
+    
     # # Get instruction from Adafruit_IO (Echo Dot)
     # if(check == 0):
     #     check = 20
