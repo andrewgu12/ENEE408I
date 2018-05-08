@@ -21,6 +21,15 @@ cap.set(6,10) # Set frame rate (set to 10)
 sentEmail = 1
 
 
+#global variable for sleep so we can change it depending on the occation.
+slpW = 0.055
+
+msg = 'H' # The /n separates the message from the headers
+
+
+sentEmail = 0
+AFprev = -1
+
 found = 0; recent = 'R'; alexa = 0; check = 0; help = 0; hcheck = 0; followcount = 0; stopcount = 0; command = '0'; commandCount = 0; turncount = 0;
 while True:
     # Image
@@ -75,7 +84,20 @@ while True:
 #        serial.write('H'.encode('ascii'))
         sys.exit(0)
         break
-
+    
+    data = aio.data('408i-robot-control')
+    command = data[0]
+    if(command!=AFprev):
+        AFprev = command
+        print('COMMAND')
+        if(command == 0):
+            print('STOP')
+            ser.write('O'.encode('ascii'))
+        elif(command == 1):
+            print('GO')
+            ser.write('1'.encode('ascii'))
+            
+    
     # # Get instruction from Adafruit_IO (Echo Dot)
     # if(check == 0):
     #     check = 20
@@ -139,28 +161,60 @@ while True:
         if(found):
             xloc = int(x)
             rloc = int(radius)
+<<<<<<< HEAD
             if xloc < 250: #Left
                 ser.write('L'.encode('ascii'))
                 time.sleep(0.055)
+=======
+            if rloc >= 9 and sentEmail == 0: #close to person
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.ehlo()
+                server.starttls()
+                server.login('team12enee408i@gmail.com', 'team12owns')
+                server.sendmail('team12enee408i@gmail.com', 'team12enee408i@gmail.com', msg)
+                server.close()
+                print('SENT MESSAGE')
+                sentEmail = 1
+            if xloc < 250: #Left
+                ser.write('L'.encode('ascii'))
+                time.sleep(slpW)
+>>>>>>> 3f1177d0e7f27695eb90849cccf66814972359f5
                 recent = 'L'
                 print('L')
             elif xloc > 450: #Right
                 ser.write('R'.encode('ascii'))
+<<<<<<< HEAD
                 time.sleep(0.055)
+=======
+                time.sleep(slpW)
+>>>>>>> 3f1177d0e7f27695eb90849cccf66814972359f5
                 recent = 'R'
                 print('R')
             else: #Forward
                 ser.write('F'.encode('ascii'))
+<<<<<<< HEAD
                 time.sleep(0.055)
+=======
+                time.sleep(slpW)
+>>>>>>> 3f1177d0e7f27695eb90849cccf66814972359f5
                 print('F')
         else:
+            sentEmail = 0
             if recent == 'L': #Search Left
                ser.write('Y'.encode('ascii'))
+<<<<<<< HEAD
                time.sleep(0.055)
                print('Y')
             elif recent == 'R': #Search Right
                 ser.write('X'.encode('ascii'))
                 time.sleep(0.055)
+=======
+               time.sleep(slpW)
+               print('Y')
+            elif recent == 'R': #Search Right
+                ser.write('X'.encode('ascii'))
+                time.sleep(slpW)
+>>>>>>> 3f1177d0e7f27695eb90849cccf66814972359f5
                 print('X')
     elif command == '2':
         turncount = turncount + 1
