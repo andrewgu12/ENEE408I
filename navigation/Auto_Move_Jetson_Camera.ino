@@ -16,22 +16,22 @@
 #define INA2 13 // orange
 
 // motor powers/speeds (when we find the ratio of powers, list them here)
-#define slowA 70
-#define slowS 36
-#define mediumA 42
-#define mediumS 48
+#define slowA 72
+#define slowS 38
+#define mediumA 60
+#define mediumS 58
 #define highA 70
 #define highS 74
 
 int turned = 0;
 int startup = 0;
-const int lim = 12;  // Distance when object is too close
-int trig = 0;
+const int lim = 7;  // Distance when object is too close
+//int trig = 0;
 
 // this constant won't change. It's the pin number of the sensor's output:
-const int pingPinR = 7;
+const int pingPinR = 9;
 const int pingPinC = 8;
-const int pingPinL = 9;
+const int pingPinL = 7;
 
 long durationL, inchL;
 long durationC, inchC;
@@ -53,6 +53,7 @@ void setup() {
 
 int spd = 2;
 int cmd = '0';
+int isOn = 0;
 void loop() {
 
   // --------------------------------------------------------------
@@ -65,81 +66,79 @@ void loop() {
   // Autonomous Movement Algorithm
   // goForward(1), goBackward(1), rotateRight/Left(1), turnRight/Left(1), brake()
 
-  if (Serial.available() > 0) {
+  if ((Serial.available() > 0)) {
     cmd = Serial.read();
 
     //Serial.print("Reading cmd: ");
     //Serial.println(cmd);
 
-    // Case statement to drive robot
-    switch (cmd) {
-      case 'F':  // FORWARD
-        if (inchL > lim && inchC > (lim) && inchR > lim && trig == 0) {
-          goForward(spd);
-        } else if (inchC <= (lim) && trig == 0) {
-          //goBackward(1); trig = 1;
-          brake(); //trig = 1;
-        } else if (inchR <=  lim / 2 && inchL <= lim / 2 && trig == 0) {
-          goBackward(spd); trig = 1;
-        } else if (inchR > lim && inchL <= lim && trig == 0) {
-          rotateRight(spd);
-        } else if (inchR <= lim && inchL > lim && trig == 0) {
-          rotateLeft(spd);
-        } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim / 2)) {
-          trig = 0;
-        }
-        break;
-      case 'L':  // LEFT
-        /*
-          if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
-          rotateRight(spd);
-          } else if (inchC <= (lim/2) && trig == 0) {
-          //goBackward(1); trig = 1;
-          brake(); //trig = 1;
-          } else if (inchR <= lim && inchL <= lim && trig == 0) {
-          goBackward(spd); trig = 1;
-          } else if (inchR > lim && inchL <= lim && trig == 0) {
-          rotateRight(spd);
-          } else if (inchR <= lim && inchL > lim && trig == 0) {
-          rotateLeft(spd);
-          } else if (trig == 1 && inchR > lim && inchL > lim  && inchC > (lim/2)) {
-          trig = 0;
+    if (isOn == 0) {
+      brake();
+      if (cmd == 'I') {
+        isOn = 1;
+      }
+    } else {
+      // Case statement to drive robot
+      switch (cmd) {
+        case 'F':  // FORWARD
+          if (inchL > lim && inchC > (lim + 5) && inchR > lim) {
+            goForward(spd);
+          } else if (inchC <= (lim + 5)) {
+            brake();
+          } else if (inchR <=  lim / 2 && inchL <= lim / 2) {
+            goBackward(spd);
+          } else if (inchR > lim && inchL <= lim) {
+            rotateRight(spd);
+          } else if (inchR <= lim && inchL > lim) {
+            rotateLeft(spd);
           }
-        */
-        rotateRight(spd);
-        break;
-      case 'R':  // RIGHT
-        rotateLeft(spd);
-        /*
-          if (inchR > lim && inchL > lim && inchC > (lim/2) && trig == 0) {
-          rotateLeft(spd);
-          } else if (inchC <= (lim/2) && trig == 0) {
-          //goBackward(1); trig = 1;
-          brake(); //trig = 1;
-          } else if (inchR <= lim && inchL <= lim && trig == 0) {
-          goBackward(spd); trig = 1;
-          } else if (inchR > lim && inchL <= lim && trig == 0) {
-          rotateRight(spd);
-          } else if (inchR <= lim && inchL > lim && trig == 0) {
-          rotateLeft(spd);
-          } else if (trig == 1 && inchR > lim && inchL > lim && inchC > (lim/2)) {
-          trig = 0;
+          break;
+        case 'L':  // LEFT
+          if (inchR > lim && inchL > lim && inchC > (lim / 2)) {
+            rotateRight(spd);
+          } else if (inchC <= (lim + 5)) {
+            brake(); //trig = 1;
+          } else if (inchR <= lim && inchL <= lim) {
+            goBackward(spd); //trig = 1;
+          } else if (inchR > lim && inchL <= lim) {
+            turnRight(spd);
+          } else if (inchR <= lim && inchL > lim) {
+            turnLeft(spd);
           }
-        */
-        break;
-      case 'H':  // HOLD
-        brake(); break;
-      case 'X':
-        brake(); break;
-      //search('R'); break;
-      case 'Y':
-        brake(); break;
-      //search('L'); break;
-      default:
-        brake();
-        //move_with_sensor();
-        break;
-    }
+          //rotateRight(spd);
+          break;
+        case 'R':  // RIGHT
+          if (inchR > lim && inchL > lim && inchC > (lim / 2)) {
+            rotateLeft(spd);
+          } else if (inchC <= (lim + 5)) {
+            brake();
+          } else if (inchR <= lim && inchL <= lim) {
+            goBackward(spd);
+          } else if (inchR > lim && inchL <= lim) {
+            turnRight(spd);
+          } else if (inchR <= lim && inchL > lim) {
+            turnLeft(spd);
+          }
+          //rotateLeft(spd);
+          break;
+        case 'H':  // HOLD
+          brake(); break;
+        case 'X':
+          //brake(); break;
+          search('R'); break;
+        case 'Y':
+          //brake(); break;
+          search('L'); break;
+        case 'O':   // OFF
+          isOn = 0; break;
+        case 'I':   // ON
+          isOn = 1; break;
+        default:
+          brake();
+          //move_with_sensor();
+          break;
+      } // switch (cmd)
+    } // if cmd == 'O'
   } else {
     brake();
   }
@@ -392,10 +391,10 @@ void rotateRight(int s) {
 
 void search(char dir) {
   if (dir == 'R') {
-    rotateLeft(4); //Purposely triggering default case
+    rotateLeft(spd); //Purposely triggering default case
   }
   else if (dir == 'L') {
-    rotateRight(4);  //Purposely triggering default case
+    rotateRight(spd);  //Purposely triggering default case
   }
 }
 
