@@ -14,12 +14,16 @@ cap = cv2.VideoCapture(1)
 cap.set(6,10) # Set frame rate (set to 10)
 
 # Set up windows with sliders
-#cv2.namedWindow('image')
-#cv2.namedWindow('mask')
+cv2.namedWindow('image')
+cv2.namedWindow('mask')
+
+#global variable for sleep so we can change it depending on the occation.
+slpW = 0.055
+
+msg = 'H' # The /n separates the message from the headers
 
 
-sentEmail = 1
-
+sentEmail = 0
 
 found = 0; recent = 'R'; alexa = 0; check = 0; help = 0; hcheck = 0; followcount = 0; stopcount = 0; command = '0'; commandCount = 0; turncount = 0;
 while True:
@@ -44,7 +48,7 @@ while True:
 
     # Dilate mask to remove holes from noise
     mask = dilation(mask, np.ones((3, 3)))
-    # cv2.imshow('mask', mask) # display mask here because findContours modifies it
+    cv2.imshow('mask', mask) # display mask here because findContours modifies it
 
     # Find contours in image
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -68,7 +72,7 @@ while True:
 
 
     # Display images
-    # cv2.imshow('image', img)
+    cv2.imshow('image', img)
 
     # Exit if q is pressed
     if cv2.waitKey(1) == ord('q'):
@@ -139,28 +143,38 @@ while True:
         if(found):
             xloc = int(x)
             rloc = int(radius)
+            if rloc >= 9 and sentEmail == 0: #close to person
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.ehlo()
+                server.starttls()
+                server.login('team12enee408i@gmail.com', 'team12owns')
+                server.sendmail('team12enee408i@gmail.com', 'team12enee408i@gmail.com', msg)
+                server.close()
+                print('SENT MESSAGE')
+                sentEmail = 1
             if xloc < 250: #Left
                 ser.write('L'.encode('ascii'))
-                time.sleep(0.055)
+                time.sleep(slpW)
                 recent = 'L'
                 print('L')
             elif xloc > 450: #Right
                 ser.write('R'.encode('ascii'))
-                time.sleep(0.055)
+                time.sleep(slpW)
                 recent = 'R'
                 print('R')
             else: #Forward
                 ser.write('F'.encode('ascii'))
-                time.sleep(0.055)
+                time.sleep(slpW)
                 print('F')
         else:
+            sentEmail = 0
             if recent == 'L': #Search Left
                ser.write('Y'.encode('ascii'))
-               time.sleep(0.055)
+               time.sleep(slpW)
                print('Y')
             elif recent == 'R': #Search Right
                 ser.write('X'.encode('ascii'))
-                time.sleep(0.055)
+                time.sleep(slpW)
                 print('X')
     elif command == '2':
         turncount = turncount + 1

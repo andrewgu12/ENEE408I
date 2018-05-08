@@ -14,12 +14,17 @@ cap = cv2.VideoCapture(1)
 cap.set(6,10) # Set frame rate (set to 10)
 
 # Set up windows with sliders
-#cv2.namedWindow('image')
-#cv2.namedWindow('mask')
+cv2.namedWindow('image')
+cv2.namedWindow('mask')
+
+#global variable for sleep so we can change it depending on the occation.
+slpW = 0.055
+sec2 = 0
+msg = 'H' # The /n separates the message from the headers
 
 
-sentEmail = 1
-
+sentEmail = 0
+AFprev = -1
 
 found = 0; recent = 'R'; alexa = 0; check = 0; help = 0; hcheck = 0; followcount = 0; stopcount = 0; command = '0'; commandCount = 0; turncount = 0;
 while True:
@@ -30,12 +35,12 @@ while True:
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # Threshold hsv image within hue range
-    minHue = 52
-    maxHue = 64
-    minSaturation = 84
-    maxSaturation = 141
+    minHue = 51
+    maxHue = 71
+    minSaturation = 55
+    maxSaturation = 143
     minValue = 0
-    maxValue = 91
+    maxValue = 161
     mask = 255 * (
                     (hsv[:,:,0] > minHue) & (hsv[:,:,0] < maxHue) \
                   & (hsv[:,:,1] > minSaturation) & (hsv[:,:,1] < maxSaturation) \
@@ -44,7 +49,7 @@ while True:
 
     # Dilate mask to remove holes from noise
     mask = dilation(mask, np.ones((3, 3)))
-    # cv2.imshow('mask', mask) # display mask here because findContours modifies it
+    cv2.imshow('mask', mask) # display mask here because findContours modifies it
 
     # Find contours in image
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -57,7 +62,8 @@ while True:
         center = (int(x),int(y))
         #print(center)
         radius = int(radius)
-        if radius >= 9:
+        if radius >= 30:
+            #print("radius: {}".format(radius))
             cv2.circle(img,center,radius,(0,255,0),2)
             cv2.circle(img,center,2,(0,255,0),0)
             found = 1;
@@ -68,7 +74,7 @@ while True:
 
 
     # Display images
-    # cv2.imshow('image', img)
+    cv2.imshow('image', img)
 
     # Exit if q is pressed
     if cv2.waitKey(1) == ord('q'):
@@ -76,6 +82,25 @@ while True:
         sys.exit(0)
         break
 
+
+    
+    if(sec2 > 15):
+    	data = aio.data('408i-robot-control')
+    	command = data[0].value
+    	print(command)
+	sec2=0
+    	if(command!=AFprev):
+        	AFprev = command
+        	print('COMMAND')
+        	if(command == '0'):
+            		print('STOP')
+            		ser.write('O'.encode('ascii'))
+            		time.sleep(slpW)
+        	elif(command == '1'):
+            		print('GO')
+            		ser.write('I'.encode('ascii'))
+            		time.sleep(slpW)
+    
     # # Get instruction from Adafruit_IO (Echo Dot)
     # if(check == 0):
     #     check = 20
@@ -130,6 +155,7 @@ while True:
 
     # Send Directions to Arduino
     command = '1' # fake it for now
+    sec2 += 1
     if command == '0':
         #print('HOLD')
         ser.write('H'.encode('ascii'))
@@ -139,28 +165,38 @@ while True:
         if(found):
             xloc = int(x)
             rloc = int(radius)
+            if rloc >= 44 and sentEmail == 0: #close to person
+                server = smtplib.SMTP('smtp.gmail.com', 587)
+                server.ehlo()
+                server.starttls()
+                server.login('team12enee408i@gmail.com', 'team12owns')
+                server.sendmail('team12enee408i@gmail.com', 'team12enee408i@gmail.com', msg)
+                server.close()
+                print('SENT MESSAGE')
+                sentEmail = 1
             if xloc < 250: #Left
                 ser.write('L'.encode('ascii'))
-                time.sleep(0.055)
+                time.sleep(slpW)
                 recent = 'L'
                 print('L')
-            elif xloc > 450: #Right
+            elif xloc > 350: #Right
                 ser.write('R'.encode('ascii'))
-                time.sleep(0.055)
+                time.sleep(slpW)
                 recent = 'R'
                 print('R')
             else: #Forward
                 ser.write('F'.encode('ascii'))
-                time.sleep(0.055)
+                time.sleep(slpW)
                 print('F')
         else:
+            sentEmail = 0
             if recent == 'L': #Search Left
                ser.write('Y'.encode('ascii'))
-               time.sleep(0.055)
+               time.sleep(slpW)
                print('Y')
             elif recent == 'R': #Search Right
                 ser.write('X'.encode('ascii'))
-                time.sleep(0.055)
+                time.sleep(slpW)
                 print('X')
     elif command == '2':
         turncount = turncount + 1
@@ -206,3 +242,4 @@ while True:
         ser.write('H'.encode('ascii'))
         command == '0'
         sys.exit(0)
+
